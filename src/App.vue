@@ -17,4 +17,7 @@ export default {
 
 <style lang="scss">
 @import "./assets/custom.scss";
+#app {
+  background: $light;
+}
 </style>
