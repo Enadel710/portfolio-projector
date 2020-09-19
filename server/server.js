@@ -62,20 +62,17 @@ app.post("/fetchrequest", (req, res) => {
     });
   }
 
-
-  // db.all(`INSERT INTO Stocks IF NOT EXISTS VALUES ('AAPL', 3.8, 2.9, 'Apple', 12.52, 2.93, 3.41);`, [], function(error, tickers) {
-  //   if (error) {
-  //     console.log(error);
-  //   } else {
-  //     res.send({data: tickers});
-  //   }
-  // });
-  
-
-  // if (req.body.type === "allTickers") {
-  //   db.all(`SELECT ticker FROM Stocks`, [], (err, data))
-  //   res.send(data)
-  // }
+  else if (req.body.type === "allTickers") {
+    db.all(`SELECT ticker FROM Stocks ORDER BY ticker`, [], function(err, tickers) {
+      if (err) {
+        console.log(err.message);
+        res.sendStatus(500);
+      } else {
+        console.log("All tickers given successfully");
+        res.send({data: tickers});
+      }
+    });
+  }
 
   // res.send({
   //   hello: "Hello there"
