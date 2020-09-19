@@ -129,26 +129,30 @@ export default {
     temp1[5] = { cat: "Cat6", value: "Value6" };
     this.portfolioData = temp1;
 
-    // get all the tickers in the portfolio for the ticker list
-    this.post(this.serverURL, { type: "allTickers" })
-      .then((res) => {
-        console.log(res.data);
-        let temp = [];
-        for (let i = 0; i < res.data.data.length; i++)
-          temp[i] = { value: res.data.data[i].ticker, text: res.data.data[i].ticker };
-
-        this.allStockTickers = temp;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    this.requestTickers();
   },
   methods: {
-    addNewStock() {
-      console.log("Added " + this.stockToAdd);
-      this.post(this.serverURL, { type: "addTicker", ticker: this.stockToAdd })
+    // gets all the tickers in the portfolio for the ticker list
+    requestTickers() {
+      this.post(this.serverURL, { type: "allTickers" })
         .then((res) => {
           console.log(res.data);
+          let temp = [];
+          for (let i = 0; i < res.data.data.length; i++)
+            temp[i] = {
+              value: res.data.data[i].ticker,
+              text: res.data.data[i].ticker,
+            };
+          this.allStockTickers = temp;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    addNewStock() {
+      this.post(this.serverURL, { type: "addTicker", ticker: this.stockToAdd })
+        .then(() => {
+          this.requestTickers();
         })
         .catch((err) => {
           console.log(err);
