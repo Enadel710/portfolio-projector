@@ -37,13 +37,23 @@
           <b-row class="widget" align-h="center">
             <!-- add a new stock -->
             <div class="margin-bottom">
-              <b-button variant="primary" v-b-modal.addstock>Add New Stock</b-button>
+              <b-button variant="primary" v-b-modal.addstock @ok="addNewStock()">Add New Stock</b-button>
               <b-modal id="addstock" title="Add a new stock">
-                <b-form-input id="input-small" size="sm" placeholder="Enter the stock ticker"></b-form-input>
+                <b-form-input
+                  id="input-small"
+                  v-model="stockToAdd"
+                  size="md"
+                  placeholder="Enter the stock ticker"
+                ></b-form-input>
               </b-modal>
             </div>
             <!-- select a stock -->
-            <b-form-select class="margin-bottom" v-model="selected" :options="allStockTickers"></b-form-select>
+            <b-form-select
+              v-if="allStockTickers"
+              class="margin-bottom"
+              v-model="selected"
+              :options="allStockTickers"
+            ></b-form-select>
             <!-- table about current stock -->
             <b-table
               class="margin-bottom"
@@ -85,6 +95,7 @@ export default {
     return {
       serverURL: "http://localhost:8080/fetchRequest",
       portfolioData: null,
+      stockToAdd: "",
       sortBy: "age",
       sortDesc: false,
       fields: [
@@ -105,40 +116,42 @@ export default {
         { isActive: true, age: 38, first_name: "Jami", last_name: "Carney" },
       ],
       selected: null,
-      allStockTickers: [
-        { value: null, text: "Select a stock" },
-        { value: "TSLA", text: "TSLA" },
-      ],
+      allStockTickers: null,
     };
   },
   created() {
-    let temp = [];
-    temp[0] = { cat: "Cat1", value: "Value1" };
-    temp[1] = { cat: "Cat2", value: "Value2" };
-    temp[2] = { cat: "Cat3", value: "Value3" };
-    temp[3] = { cat: "Cat4", value: "Value4" };
-    temp[4] = { cat: "Cat5", value: "Value5" };
-    temp[5] = { cat: "Cat6", value: "Value6" };
-    this.portfolioData = temp;
+    let temp1 = [];
+    temp1[0] = { cat: "Cat1", value: "Value1" };
+    temp1[1] = { cat: "Cat2", value: "Value2" };
+    temp1[2] = { cat: "Cat3", value: "Value3" };
+    temp1[3] = { cat: "Cat4", value: "Value4" };
+    temp1[4] = { cat: "Cat5", value: "Value5" };
+    temp1[5] = { cat: "Cat6", value: "Value6" };
+    this.portfolioData = temp1;
 
     this.post(this.serverURL, { type: "allTickers" })
       .then((res) => {
         console.log(res.data);
-        for (let i = 0; i < res.data.data.length; i++) {
-          this.allStockTickers[i] = {value: res.data.data[i], text: res.data.data[i] };
-        }
+        let temp = [];
+        for (let i = 0; i < res.data.data.length; i++)
+          temp[i] = { value: res.data.data[i], text: res.data.data[i] };
+
+        this.allStockTickers = temp;
       })
       .catch((err) => {
         console.log(err);
       });
-
-    // this.post(this.serverURL, { type: "addTicker", ticker: "EVAN" })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+  },
+  methods: {
+    addNewStock() {
+      this.post(this.serverURL, { type: "addTicker", ticker: this.stockToAdd })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
 };
 </script>
