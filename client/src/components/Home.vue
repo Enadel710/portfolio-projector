@@ -37,13 +37,13 @@
           <b-row class="widget" align-h="center">
             <!-- add a new stock -->
             <div class="margin-bottom">
-              <b-button variant="primary" v-b-modal.addstock>Add New Stonk</b-button>
-              <b-modal id="addstock" title="Add new stock">
-                <p>Hello from modal!</p>
+              <b-button variant="primary" v-b-modal.addstock>Add New Stock</b-button>
+              <b-modal id="addstock" title="Add a new stock">
+                <b-form-input id="input-small" size="sm" placeholder="Enter the stock ticker"></b-form-input>
               </b-modal>
             </div>
             <!-- select a stock -->
-            <b-form-select class="margin-bottom" v-model="selected" :options="options"></b-form-select>
+            <b-form-select class="margin-bottom" v-model="selected" :options="allStockTickers"></b-form-select>
             <!-- table about current stock -->
             <b-table
               class="margin-bottom"
@@ -121,24 +121,24 @@ export default {
     temp[5] = { cat: "Cat6", value: "Value6" };
     this.portfolioData = temp;
 
-    // this.post(this.serverURL, { type: "allTickers" })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     for (let i = 0; i < res.data.data.length; i++) {
-    //       this.allStockTickers[i] = {value: res.data.data[i], text: res.data.data[i] };
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
-    this.post(this.serverURL, { type: "addTicker", ticker: "EVAN" })
+    this.post(this.serverURL, { type: "allTickers" })
       .then((res) => {
         console.log(res.data);
+        for (let i = 0; i < res.data.data.length; i++) {
+          this.allStockTickers[i] = {value: res.data.data[i], text: res.data.data[i] };
+        }
       })
       .catch((err) => {
         console.log(err);
       });
+
+    // this.post(this.serverURL, { type: "addTicker", ticker: "EVAN" })
+    //   .then((res) => {
+    //     console.log(res.data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   },
 };
 </script>
