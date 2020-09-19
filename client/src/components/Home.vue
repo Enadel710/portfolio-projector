@@ -123,7 +123,7 @@ export default {
 
     this.post(this.serverURL, { ticker: "APPL" })
       .then((res) => {
-        console.log("Returned Data:" + res);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);

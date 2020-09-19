@@ -1,7 +1,9 @@
 var express = require("express");
 var serveStatic = require("serve-static");
 const sqlite3 = require("sqlite3").verbose();
-var scraper = require("webscraping.js");
+const bodyParser = require("body-parser");
+const httpMsg = require("http-msgs");
+// var scraper = require("webscraping.js");
 const DB_PATH = './tmp/database.db';
 
 app = express();
@@ -43,3 +45,14 @@ db.exec(dbSchema, function(err){
   }
 });
 
+
+app.use(bodyParser.json({ extended: true }));
+
+app.post("/fetchrequest", (req, res) => {
+  console.log("Got body: ", req.body);
+  res.setHeader('Content-Type', 'application/json');
+
+  res.send({
+    hello: "Hello there"
+  });
+});
