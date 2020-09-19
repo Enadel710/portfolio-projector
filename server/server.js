@@ -1,6 +1,7 @@
 var express = require("express");
 var serveStatic = require("serve-static");
 const sqlite3 = require("sqlite3").verbose();
+var scraper = require("webscraping.js");
 const DB_PATH = './tmp/database.db';
 
 app = express();
@@ -38,6 +39,7 @@ var dbSchema = `CREATE TABLE IF NOT EXISTS Stocks (
 
 db.exec(dbSchema, function(err){
   if (err) {
-    console.logg(err);
+    console.log(err);
   }
 });
+
