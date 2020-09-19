@@ -1,6 +1,8 @@
 var express = require("express");
 var serveStatic = require("serve-static");
-const sqlite = require("sqlite")
+const sqlite3 = require("sqlite3").verbose();
+const DB_PATH = './tmp/database.db';
+
 app = express();
 app.use(serveStatic(__dirname + "/../client/dist"));
 var port = process.env.PORT || 8080;
@@ -10,15 +12,10 @@ app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-
-(async () => {
-  // open the database
-  const db = await sqlite.open({
-    filename: "/tmp/database.db",
-    driver: sqlite.Database,
-  });
-})().then(function(value) {
-    console.log("Async works!", value);
-}).catch(function(err) {
-    console.log("Error!", err)
+const db = new sqlite3.Database(DB_PATH, function(err){
+    if (err) {
+        console.log(err)
+        return
+    }
+    console.log('Connected to ' + DB_PATH + ' database.')
 });
