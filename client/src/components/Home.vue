@@ -1,68 +1,68 @@
 <template>
   <div>
     <b-container fluid class="header">
-      <h1>
-        <b>Portfolio</b>
-      </h1>
+      <h2>
+        <b>Portfolio-Projector</b>
+      </h2>
     </b-container>
 
     <b-container fluid>
       <b-row>
-        <h2>Overall Stats</h2>
-      </b-row>
-      <b-row>
-        <b-col class="text">
-          <b-table striped hover :items="items"></b-table>
-        </b-col>
-        <b-col class="overallstatchart">test</b-col>
-      </b-row>
-
-      <br />
-      <div class="line"></div>
-      <br />
-
-      <b-row>
-        <b-col>
-          <b-row class="text">
-            <b-form-select v-model="selected" :options="options"></b-form-select>
+        <!-- general information about portfolio -->
+        <b-col cols="7">
+          <b-row>
+            <!-- portfolio table -->
+            <b-col cols="4" class="widget">
+              <h4 style="text-align: center">Portfolio</h4>
+              <List v-bind:data="portfolioData" />
+              <!-- <b-table striped hover :fields="null" :items="portfolioInfo"></b-table> -->
+            </b-col>
+            <!-- general portfolio charts -->
+            <b-col cols="8">
+              <!-- growth line line chart -->
+              <b-row class="widget">
+                <!-- line chart here -->
+                <LineChart />
+              </b-row>
+              <!-- stock percentage pie chart -->
+              <b-row class="widget">
+                <!-- pie chart here -->
+                <LineChart />
+              </b-row>
+            </b-col>
           </b-row>
-
-          <br />
-
-          <b-row class="text">
+        </b-col>
+        <!-- information about individual stocks -->
+        <b-col cols="5">
+          <b-row class="widget" align-h="center">
+            <!-- add a new stock -->
+            <div class="margin-bottom">
+              <b-button variant="primary" v-b-modal.addstock>Add New Stonk</b-button>
+              <b-modal id="addstock" title="Add new stock">
+                <p>Hello from modal!</p>
+              </b-modal>
+            </div>
+            <!-- select a stock -->
+            <b-form-select class="margin-bottom" v-model="selected" :options="options"></b-form-select>
+            <!-- table about current stock -->
             <b-table
+              class="margin-bottom"
               :items="items"
               :fields="fields"
               :sort-by.sync="sortBy"
               :sort-desc.sync="sortDesc"
             ></b-table>
-          </b-row>
-
-          <br />
-
-          <b-row class="text" align-h="center">
+            <!-- add more shares of current stock -->
             <div>
-              <b-button pill variant="primary" v-b-modal.addshares>Add More Shares of CURRENTSTOCK</b-button>
-
+              <b-button
+                class="center"
+                variant="primary"
+                v-b-modal.addshares
+              >Add More Shares of CURRENTSTOCK</b-button>
               <b-modal id="addshares" title="Add more shares of CURRENTSTOCK">
                 <p>Hello from modal!</p>
               </b-modal>
             </div>
-          </b-row>
-        </b-col>
-        <b-col>
-          <b-row class="text" align-h="center">
-            <div>
-              <b-button pill variant="primary" v-b-modal.addstock>Add New Stonk</b-button>
-
-              <b-modal id="addstock" title="Add new stock">
-                <p>Hello from modal!</p>
-              </b-modal>
-            </div>
-          </b-row>
-
-          <b-row class="text" align-h="center">
-            <LineChart />
           </b-row>
         </b-col>
       </b-row>
@@ -72,12 +72,19 @@
 
 <script>
 import LineChart from "@/components/LineChart";
+import List from "@/components/List";
+import httpPostMixin from "@/mixins/httpPostMixin";
+
 export default {
   components: {
     LineChart,
+    List,
   },
+  mixins: [httpPostMixin],
   data() {
     return {
+      serverURL: "http://localhost:8080/fetchRequest",
+      portfolioData: null,
       sortBy: "age",
       sortDesc: false,
       fields: [
@@ -97,28 +104,50 @@ export default {
         { isActive: false, age: 89, first_name: "Geneva", last_name: "Wilson" },
         { isActive: true, age: 38, first_name: "Jami", last_name: "Carney" },
       ],
-
       selected: null,
       options: [
-        { value: null, text: "Please select an option" },
-        { value: "a", text: "This is First option" },
+        { value: null, text: "Select a stock" },
+        { value: "TSLA", text: "TSLA" },
       ],
     };
+  },
+  created() {
+    let temp = [];
+    temp[0] = { cat: "Cat1", value: "Value1" };
+    temp[1] = { cat: "Cat2", value: "Value2" };
+    temp[2] = { cat: "Cat3", value: "Value3" };
+    temp[3] = { cat: "Cat4", value: "Value4" };
+    temp[4] = { cat: "Cat5", value: "Value5" };
+    temp[5] = { cat: "Cat6", value: "Value6" };
+    this.portfolioData = temp;
+
+    this.post(this.serverURL, { ticker: "APPL" })
+      .then((res) => {
+        console.log("Returned Data:" + res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 };
 </script>
 
 <style scoped>
 .header {
-  padding: 20px;
-  height: 80px;
+  padding: 10px;
+  height: 60px;
   text-align: center;
   background: lightblue;
   border-bottom: 3px solid #2b3c58;
   color: #2b3c58;
 }
-.line {
-  background: black;
-  height: 5px;
+.widget {
+  background-color: white;
+  border-radius: 10px;
+  border: 12px solid #f1f1f1;
+  padding: 10px;
+}
+.margin-bottom {
+  margin-bottom: 10px;
 }
 </style>

@@ -18,6 +18,6 @@ export default {
 <style lang="scss">
 @import "./assets/custom.scss";
 #app {
-  background: $light;
+  background: #f1f1f1;
 }
 </style>
