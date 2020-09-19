@@ -105,7 +105,7 @@ export default {
         { isActive: true, age: 38, first_name: "Jami", last_name: "Carney" },
       ],
       selected: null,
-      options: [
+      allStockTickers: [
         { value: null, text: "Select a stock" },
         { value: "TSLA", text: "TSLA" },
       ],
@@ -121,7 +121,18 @@ export default {
     temp[5] = { cat: "Cat6", value: "Value6" };
     this.portfolioData = temp;
 
-    this.post(this.serverURL, { ticker: "APPL" })
+    // this.post(this.serverURL, { type: "allTickers" })
+    //   .then((res) => {
+    //     console.log(res.data);
+    //     for (let i = 0; i < res.data.data.length; i++) {
+    //       this.allStockTickers[i] = {value: res.data.data[i], text: res.data.data[i] };
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
+    this.post(this.serverURL, { type: "addTicker", ticker: "EVAN" })
       .then((res) => {
         console.log(res.data);
       })
