@@ -37,8 +37,8 @@
           <b-row class="widget" align-h="center">
             <!-- add a new stock -->
             <div class="margin-bottom">
-              <b-button variant="primary" v-b-modal.addstock @ok="addNewStock()">Add New Stock</b-button>
-              <b-modal id="addstock" title="Add a new stock">
+              <b-button variant="primary" v-b-modal.addstock>Add New Stock</b-button>
+              <b-modal id="addstock" title="Add a new stock" v-on:ok="addNewStock()">
                 <b-form-input
                   id="input-small"
                   v-model="stockToAdd"
@@ -129,12 +129,13 @@ export default {
     temp1[5] = { cat: "Cat6", value: "Value6" };
     this.portfolioData = temp1;
 
+    // get all the tickers in the portfolio for the ticker list
     this.post(this.serverURL, { type: "allTickers" })
       .then((res) => {
         console.log(res.data);
         let temp = [];
         for (let i = 0; i < res.data.data.length; i++)
-          temp[i] = { value: res.data.data[i], text: res.data.data[i] };
+          temp[i] = { value: res.data.data[i].ticker, text: res.data.data[i].ticker };
 
         this.allStockTickers = temp;
       })
@@ -144,6 +145,7 @@ export default {
   },
   methods: {
     addNewStock() {
+      console.log("Added " + this.stockToAdd);
       this.post(this.serverURL, { type: "addTicker", ticker: this.stockToAdd })
         .then((res) => {
           console.log(res.data);
