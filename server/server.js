@@ -2,7 +2,6 @@ var express = require("express");
 var serveStatic = require("serve-static");
 const sqlite3 = require("sqlite3").verbose();
 const bodyParser = require("body-parser");
-const httpMsg = require("http-msgs");
 // var scraper = require("webscraping.js");
 const DB_PATH = './tmp/database.db';
 
@@ -27,7 +26,7 @@ var dbSchema = `CREATE TABLE IF NOT EXISTS Stocks (
   ticker VARCHAR(5) PRIMARY KEY,
   avg_cost DECIMAL(10,2),
   quantity DECIMAL(10,5),
-  name VARCHAR(30) UNIQUE,
+  name VARCHAR(30),
   curr_cost DECIMAL(10,5),
   avg_one_year DECIMAL(10,5),
   avg_five_year DECIMAL(10,5)
@@ -49,10 +48,36 @@ db.exec(dbSchema, function(err){
 app.use(bodyParser.json({ extended: true }));
 
 app.post("/fetchrequest", (req, res) => {
-  console.log("Got body: ", req.body);
-  res.setHeader('Content-Type', 'application/json');
+  // console.log("Got body: ", req.body);
 
-  res.send({
-    hello: "Hello there"
-  });
+  if (req.body.type === "addTicker") {
+    db.run(`INSERT INTO Stocks VALUES(?, 3.8, 2.9, 'Apple', 12.52, 2.93, 3.41);`, [req.body.ticker], (err) => {
+      if (err) {
+        console.log(err.message);
+        res.sendStatus(500);
+      } else {
+        console.log("Row was added to table successfully")
+        res.sendStatus(200);
+      }
+    });
+  }
+
+
+  // db.all(`INSERT INTO Stocks IF NOT EXISTS VALUES ('AAPL', 3.8, 2.9, 'Apple', 12.52, 2.93, 3.41);`, [], function(error, tickers) {
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     res.send({data: tickers});
+  //   }
+  // });
+  
+
+  // if (req.body.type === "allTickers") {
+  //   db.all(`SELECT ticker FROM Stocks`, [], (err, data))
+  //   res.send(data)
+  // }
+
+  // res.send({
+  //   hello: "Hello there"
+  // });
 });
